@@ -54,7 +54,7 @@ class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     table_id = db.Column(db.Integer, nullable=False)
     total_price = db.Column(db.Integer, default=0)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.now)
 
     items = db.relationship('OrderItem', backref='order', lazy=True, cascade='all, delete-orphan')
 

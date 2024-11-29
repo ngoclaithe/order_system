@@ -1,0 +1,198 @@
+<head>
+    <meta charset="UTF-8">
+    <title>Cà Phê Ngõ Nhỏ 256</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="
+    sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link href="https://fonts.cdnfonts.com/css/brittany-signature" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+
+    <style>
+        .background {
+            background-image: url('../static/images/background.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+
+        .background-row {
+            background-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #product-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .col-md-3 {
+            flex: 0 1 calc(25% - 20px);
+            max-width: 250px;
+            min-width: 200px;
+            display: flex;
+        }
+
+        .card {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            margin: 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: 0.3s;
+            border-radius: 10px;
+        }
+
+        .card img {
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            object-fit: cover;
+            width: 100%;
+            height: 250px;
+        }
+
+        .card-body {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 15px;
+            text-align: center;
+            background-color: #fff;
+        }
+
+        .card-title {
+            margin-bottom: 10px;
+        }
+
+        .card-text {
+            margin-bottom: 5px;
+        }
+
+        #orderModal .modal-body {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        #cartList {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            min-height: 50px;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+            padding: 5px;
+            background-color: #f9f9f9;
+        }
+
+        #checkOrderBtn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 10;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+        }
+
+        #checkOrderBtn:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+
+
+<body class="background">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="container">
+                <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
+                    <a class="navbar-brand" href="/choice">
+                        <img src="../static/images/coffee.jpg" width="30" height="30" class="d-inline-block align-top"
+                            alt="Company Logo">
+                        Ngõ nhỏ
+                    </a>
+                    <span class="navbar-text mx-auto"></span>
+                </header>
+            </div>
+        </div>
+        <div class="container text-center" style="margin-top: 5%;">
+            <h1 class="text-center mb-4">Danh sách đơn hàng</h1>
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Thời gian tạo</th>
+                        <th>Bàn</th>
+                        <th>Sản phẩm</th>
+                        <th>Tổng tiền</th>
+                    </tr>
+                </thead>
+                <tbody id="order-table-body">
+                </tbody>
+            </table>
+        </div>
+        
+
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        <script>
+
+            fetch(`/get_orders`, {
+                method: 'GET',
+            })
+                .then(response => {
+                    if (!response.ok) throw new Error('Failed to fetch orders');
+                    return response.json();
+                })
+                .then(data => {
+                    const tableBody = document.getElementById('order-table-body');
+                    tableBody.innerHTML = ''; 
+                    data.forEach((order, index) => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                <td>${index + 1}</td>
+                <td>${order.created_at}</td>
+                <td>Bàn ${order.table_number}</td>
+                <td>
+                    <ul>
+                        ${order.items.map(item => `
+                            <li>${item.product_name} - SL: ${item.quantity} - ${item.total_price} VND - ${item.notes}</li>
+                        `).join('')}
+                    </ul>
+                </td>
+                <td>${order.total_price.toLocaleString()} VND</td>
+            `;
+
+                        tableBody.appendChild(row);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    toastr.error('Không thể tải danh sách đơn hàng.');
+                });
+
+
+        </script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

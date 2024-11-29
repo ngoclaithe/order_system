@@ -24,7 +24,9 @@ mqtt_client.connect("localhost", 1883, 60)
 @app.route('/')
 def home():
     return render_template('choice.html')
-
+@app.route('/danhsach')
+def staff_get_order():
+    return render_template('danhsachorder.html')
 @app.route('/get-list-product', methods=['GET'])
 def get_list_product():
     try:
@@ -46,6 +48,7 @@ def get_list_product():
 def create_order():
     try:
         data = request.json
+        print("Day la data BE nhan duoc",data)
         table_id = data.get('table_id')
         items = data.get('items')  
 
@@ -66,7 +69,7 @@ def create_order():
 
             price = float(product.price) if product.price is not None else 0
             quantity = int(item['quantity']) if item['quantity'] is not None else 0
-
+            # print(item.get('notes'))
             order_item = OrderItem(
                 order_id=order.id, 
                 product_id=product.id,
@@ -79,7 +82,7 @@ def create_order():
 
         order.total_price = total_price
         db.session.commit()
-        mqtt_message = f"{table_id}{total_price}"
+        mqtt_message = f"ban_{table_id}+{total_price}"
         mqtt_client.publish("control", mqtt_message)
         return jsonify({"id": order.id, "total_price": total_price}), 201
     except Exception as e:
@@ -140,6 +143,43 @@ def get_location():
         return jsonify({"state": state}), 200
     except Exception as e:
         app.logger.error(f"Error occurred: {e}")  
+        return jsonify({"error": "Internal Server Error"}), 500
+@app.route('/get_orders', methods=['GET'])
+def get_orders():
+    try:
+        today = datetime.now().date()
+
+        orders = Order.query.filter(
+            db.func.date(Order.created_at) == today
+        ).order_by(Order.created_at.desc()).all()
+
+        order_list = []
+        for order in orders:
+            order_items = OrderItem.query.filter_by(order_id=order.id).all()
+            items = [
+                {
+                    "product_id": item.product_id,
+                    "quantity": item.quantity,
+                    "notes": item.notes,
+                    "product_name": item.product.name,
+                    "product_price": item.product.price,
+                    "total_price": item.product.price * item.quantity,
+                }
+                for item in order_items
+            ]
+            order_details = {
+                "id": order.id,
+                "table_number": order.table_id,
+                "items": items,
+                "total_price": order.total_price,
+                "created_at": order.created_at.strftime('%Y-%m-%d %H:%M:%S')
+            }
+            order_list.append(order_details)
+
+        return jsonify(order_list), 200
+    except Exception as e:
+        app.logger.error(f"Error occurred: {e}")
+        app.logger.error(traceback.format_exc())
         return jsonify({"error": "Internal Server Error"}), 500
 
 
