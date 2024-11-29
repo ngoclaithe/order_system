@@ -1,0 +1,23 @@
+/* sidebar.css */
+#sidebar {
+    background-color: #f4f4f4;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
+}
+
+#sidebar .list-group-item {
+    font-size: 1.1rem;
+}
+
+#sidebar .list-group-item:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+#sidebar .list-group-item:active {
+    background-color: #0056b3;
+}

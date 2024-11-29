@@ -1,0 +1,97 @@
+.navbar-text {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    color: black;
+}
+
+.custom-navbar {
+    background-color: rgba(194, 217, 255, 0.6);
+    border-radius: 30px;
+    margin-top: 10px;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.custom-navbar .navbar-brand {
+    color: black;
+    font-size: 26px;
+    margin-left: 20px;
+}
+
+.custom-navbar .navbar-brand:hover {
+    text-decoration: none;
+}
+
+.custom-navbar .nav-link {
+    color: black;
+    transition: box-shadow 0.3s;
+    font-size: 18px;
+}
+
+.custom-navbar .nav-link:hover {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.custom-navbar .navbar-text {
+    font-size: 18px;
+}
+
+.custom-navbar .btn {
+    background-color: #6c3483;
+    color: white;
+    border: none;
+}
+
+.custom-navbar .btn:hover {
+    background-color: #5b2a6e;
+}
+
+
+.clearfix::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+
+#Abutton {
+    font-size: 24px;
+    font-weight: bold;
+    border-radius: 10px;
+    width: 250px;
+    padding: 10px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    color: #17139e;
+    box-shadow: 15px 15px 19px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease 0s;
+    outline: none;
+}
+
+#Abutton:hover {
+    color: white;
+    background-color: #17139e;
+    box-shadow: 0px 15px 20px #6864d7;
+    transform: translateY(-7px);
+}
+
+#add {
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 10px;
+    width: 200px;
+    padding: 10px;
+    margin-top: 15px;
+    margin-bottom: 1px;
+    color: #17139e;
+    box-shadow: 15px 15px 19px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease 0s;
+    outline: none;
+}
+
+#add:hover {
+    color: white;
+    background-color: #17139e;
+    box-shadow: 0px 15px 20px #6864d7;
+    transform: translateY(-7px);
+}
